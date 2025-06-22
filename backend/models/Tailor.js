@@ -9,26 +9,45 @@ const tailorSchema = new mongoose.Schema(
     },
     shopName: {
       type: String,
-      required: true,
+      
     },
     address: {
       type: String,
-      required: true,
+      default: "",
     },
-    services: {
-      type: [String], // e.g., ['Blouse Stitching', 'Pant Alteration']
-      required: true,
-    },
+    // services: {
+    //   type: [String], // e.g., ['Blouse Stitching', 'Pant Alteration']
+    //   default: [],
+    // },
     pricing: {
-      type: Map, // e.g., { 'blouse': 200, 'pant': 150 }
-      of: Number,
+      type: Map,
+      of: Number, // e.g., { 'blouse': 200, 'pant': 150 }
     },
     photos: {
-      type: [String], // cloudinary image URLs
+      type: [String], // Cloudinary image URLs
+      default: [],
+    },
+    phoneNumber: {
+      type: String, // ✅ Change to String for +91 or 10-digit numbers with leading zero
+      default: "",
+    },
+    location: {
+      type: {
+        type: String,
+        enum: ['Point'],
+        default: 'Point',
+      },
+      coordinates: {
+        type: [Number], // [longitude, latitude]
+        default: [0, 0],
+      },
     },
   },
   { timestamps: true }
 );
+
+// ✅ Geospatial index
+tailorSchema.index({ location: "2dsphere" });
 
 const Tailor = mongoose.model("Tailor", tailorSchema);
 export default Tailor;
