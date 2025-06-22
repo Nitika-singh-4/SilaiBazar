@@ -1,7 +1,7 @@
-// models/Order.js
+// models/Booking.js
 import mongoose from "mongoose";
 
-const orderSchema = new mongoose.Schema(
+const bookingSchema = new mongoose.Schema(
   {
     user: {
       type: mongoose.Schema.Types.ObjectId,
@@ -18,17 +18,21 @@ const orderSchema = new mongoose.Schema(
       required: true,
     },
     date: {
-      type: Date,
-      default: Date.now,
+      type: String,
+      required: true,
+    },
+    time: {
+      type: String,
+      required: true,
     },
     status: {
       type: String,
-      enum: ["Pending", "In Progress", "Completed"],
-      default: "Pending",
+      enum: ["pending", "accepted", "rejected"],
+      default: "pending",
     },
   },
   { timestamps: true }
 );
 
-const Order = mongoose.model("Order", orderSchema);
-export default Order;
+const Booking = mongoose.model("Booking", bookingSchema);
+export default Booking;
