@@ -25,7 +25,7 @@ const UserDashboard = () => {
 
   const fetchUser = async () => {
     try {
-      const res = await axios.get("http://localhost:5000/api/users/profile", {
+      const res = await axios.get("https://silaibazar.onrender.com/api/users/profile", {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -45,7 +45,7 @@ const UserDashboard = () => {
     try {
       setLoadingNearby(true);
       const res = await axios.get(
-        `http://localhost:5000/api/tailors/nearby?lat=${lat}&lng=${lng}&radius=${radius}`
+        `https://silaibazar.onrender.com/api/tailors/nearby?lat=${lat}&lng=${lng}&radius=${radius}`
       );
       const updatedTailors = res.data.map((tailor) => ({
         ...tailor,
@@ -127,7 +127,7 @@ const UserDashboard = () => {
     
     try {
       const response = await axios.post(
-        "http://localhost:5000/api/bookings",
+        "https://silaibazar.onrender.com/api/bookings",
         {
           tailorId: bookingDetails.tailor._id,
           service: bookingDetails.service,
