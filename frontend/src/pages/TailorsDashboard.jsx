@@ -16,7 +16,7 @@ const TailorDashboard = () => {
 
   const fetchTailorProfile = async () => {
     try {
-      const res = await axios.get("http://localhost:5000/api/tailors/my-profile", {
+      const res = await axios.get("https://silaibazar.onrender.com/api/tailors/my-profile", {
         headers: { Authorization: `Bearer ${token}` },
       });
 
@@ -69,7 +69,7 @@ const TailorDashboard = () => {
         longitude: formData.longitude,
       };
 
-      await axios.put("http://localhost:5000/api/users/tailor/update-profile", updatedProfileData, {
+      await axios.put("https://silaibazar.onrender.com/api/users/tailor/update-profile", updatedProfileData, {
         headers: { Authorization: `Bearer ${token}` },
       });
 
@@ -85,7 +85,7 @@ const TailorDashboard = () => {
   const savePricing = async () => {
     try {
       await axios.put(
-        "http://localhost:5000/api/tailors/update-pricing",
+        "https://silaibazar.onrender.com/api/tailors/update-pricing",
         { pricing },
         { headers: { Authorization: `Bearer ${token}` } }
       );
