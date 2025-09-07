@@ -11,6 +11,10 @@ const TailorDashboard = () => {
   const [pricing, setPricing] = useState({});
   const [newService, setNewService] = useState("");
   const [newPrice, setNewPrice] = useState("");
+  const [bookings, setBookings] = useState([]);
+const [bookingsLoading, setBookingsLoading] = useState(true);
+const [bookingsError, setBookingsError] = useState(null);
+
   const token = localStorage.getItem("token");
   const navigate = useNavigate();
 
@@ -38,14 +42,51 @@ const TailorDashboard = () => {
       setLoading(false);
     }
   };
+ // Tailor Orders Section
+const fetchTailorOrders = async () => {
+  setBookingsLoading(true);
+  try {
+    const res = await axios.get(
+      "https://silaibazar.onrender.com/api/orders/tailor",
+      {
+        headers: { Authorization: `Bearer ${token}` },
+      }
+    );
+    setBookings(res.data); // we can keep the state name 'bookings' for simplicity
+    setBookingsError(null);
+  } catch (err) {
+    setBookingsError(err.response?.data?.msg || "Failed to load orders");
+  } finally {
+    setBookingsLoading(false);
+  }
+};
 
-  useEffect(() => {
-    if (!token) {
-      navigate("/");
-    } else {
-      fetchTailorProfile();
-    }
-  }, []);
+// Add this in useEffect instead of fetchTailorBookings:
+useEffect(() => {
+  if (!token) {
+    navigate("/");
+  } else {
+    fetchTailorProfile().then(() => {
+      fetchTailorOrders();
+    });
+  }
+}, []);
+
+// Optional: Update order status (accept/reject)
+const handleUpdateStatus = async (orderId, status) => {
+  try {
+    await axios.put(
+      `https://silaibazar.onrender.com/api/orders/${orderId}/status`,
+      { status },
+      { headers: { Authorization: `Bearer ${token}` } }
+    );
+    fetchTailorOrders(); // refresh list
+  } catch (err) {
+    console.error(err);
+    alert("Failed to update order status");
+  }
+};
+
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
@@ -160,6 +201,7 @@ const TailorDashboard = () => {
                     </div>
                   </div>
                 </div>
+                
 
                 {/* Profile Details */}
                 <div className="p-6">
@@ -529,6 +571,53 @@ const TailorDashboard = () => {
             </div>
           </div>
         )}
+        {/* Bookings Section */}
+<div className="mt-8">
+  <h2 className="text-2xl font-bold mb-4">Your Bookings</h2>
+
+  {bookingsLoading ? (
+    <p>Loading bookings...</p>
+  ) : bookingsError ? (
+    <p className="text-red-500">{bookingsError}</p>
+  ) : bookings.length === 0 ? (
+    <p>No bookings yet.</p>
+  ) : (
+    <div className="space-y-4">
+      {bookings.map((booking) => (
+        <div key={booking._id} className="p-4 bg-white rounded-xl shadow-sm flex justify-between items-center">
+          <div>
+            <p><span className="font-semibold">Customer:</span> {booking.user.name}</p>
+            <p><span className="font-semibold">Service:</span> {booking.service}</p>
+            <p><span className="font-semibold">Date:</span> {booking.date}</p>
+            <p><span className="font-semibold">Time:</span> {booking.time}</p>
+          </div>
+          <div className="flex flex-col gap-2">
+            <p className={`font-semibold ${booking.status === "accepted" ? "text-green-600" : booking.status === "rejected" ? "text-red-600" : "text-gray-600"}`}>
+              {booking.status}
+            </p>
+            {booking.status === "pending" && (
+              <div className="flex gap-2">
+                <button
+                  onClick={() => handleUpdateStatus(booking._id, "accepted")}
+                  className="px-3 py-1 bg-green-600 text-white rounded-lg"
+                >
+                  Accept
+                </button>
+                <button
+                  onClick={() => handleUpdateStatus(booking._id, "rejected")}
+                  className="px-3 py-1 bg-red-600 text-white rounded-lg"
+                >
+                  Reject
+                </button>
+              </div>
+            )}
+          </div>
+        </div>
+      ))}
+    </div>
+  )}
+</div>
+
       </div>
     </div>
   );
