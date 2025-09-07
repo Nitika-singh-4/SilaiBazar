@@ -25,3 +25,31 @@ export const getUserOrders = async (req, res) => {
     res.status(500).json({ msg: err.message });
   }
 };
+// Tailor sees all orders for their shop
+export const getTailorOrders = async (req, res) => {
+  try {
+    const orders = await Order.find({ tailor: req.user._id }) // assuming tailor._id is stored in orders
+      .populate("user", "name email")
+      .sort({ createdAt: -1 });
+    res.status(200).json(orders);
+  } catch (err) {
+    res.status(500).json({ msg: err.message });
+  }
+};
+
+// Update order status
+export const updateOrderStatus = async (req, res) => {
+  const { id } = req.params;
+  const { status } = req.body;
+  try {
+    const order = await Order.findById(id);
+    if (!order) return res.status(404).json({ msg: "Order not found" });
+
+    order.status = status;
+    await order.save();
+    res.status(200).json(order);
+  } catch (err) {
+    res.status(500).json({ msg: err.message });
+  }
+};
+

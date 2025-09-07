@@ -9,6 +9,8 @@ import MyBookings from "./pages/MyBookings";
 import Navbar from "./components/Navbar";
 import UserDashboard from "./pages/UserDashboard";
 import TailorDashboard from "./pages/TailorsDashboard"; // ✅ Import tailor dashboard
+import About from "./pages/About";
+import Contact from './pages/Contact';
 
 const App = () => {
   return (
@@ -47,7 +49,10 @@ const App = () => {
             </ProtectedRoute>
           }
         />
+        <Route path="/about" element={<About />} />
+        <Route path="/contact" element={<Contact />} />
       </Routes>
+      
     </Router>
   );
 };
